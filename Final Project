@@ -1,0 +1,74 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+Final = pd.read_csv(r'https://raw.githubusercontent.com/SR1608/Datasets/main/covid-data.csv')
+Final
+Final.info()
+Final.describe
+unique_locations = Final['location'].nunique()
+unique_locations
+continent_frequencies = Final['continent'].value_counts()
+max_frequency_continent = continent_frequencies.idxmax()
+max_frequency_continent
+max_total_cases = Final['total_cases'].max()
+max_total_cases
+mean_total_cases = Final['total_cases'].mean()
+mean_total_cases
+quartiles = Final['total_deaths'].quantile([0.25, 0.5, 0.75])
+q25 = quartiles[0.25]
+median = quartiles[0.5]
+q75 = quartiles[0.75]
+print("25th quartile:", q25)
+print("Median (50th quartile):", median)
+print("75th quartile:", q75)
+max_hdi_by_continent = Final.groupby('continent')['human_development_index'].max()
+continent_with_max_hdi = max_hdi_by_continent.idxmax()
+print("Continent with the maximum human development index:", continent_with_max_hdi)
+min_gdp_by_continent = Final.groupby('continent')['gdp_per_capita'].min()
+continent_with_min_gdp = min_gdp_by_continent.idxmin()
+continent_with_min_gdp
+columns_to_keep = ['continent', 'location', 'date', 'total_cases', 'total_deaths', 'gdp_per_capita', 'human_development_index']
+filtered_Final = Final[columns_to_keep]
+df = filtered_Final.copy()
+df
+df = Final.drop_duplicates()
+df
+missing_values = Final.isnull().sum()
+print(missing_values)
+df = Final.dropna(subset=['continent'])
+df
+df = Final.fillna(0)
+df
+Final['date'] = pd.to_datetime(Final['date'])
+Final['date'] = pd.to_datetime(Final['date'])
+Final['month'] = Final['date'].dt.month
+Final
+df_groupby = Final.groupby('continent').max().reset_index()
+df_groupby
+df_groupby['total_deaths_to_total_cases'] = df_groupby['total_deaths'] / df_groupby['total_cases']
+df_groupby
+plt.figure(figsize=(10, 6))
+sns.scatterplot(data=df, x='gdp_per_capita', y='total_cases')
+plt.title("Scatter Plot of Total Cases vs GDP Per Capita")
+plt.xlabel("GDP Per Capita")
+plt.ylabel("Total Cases")
+plt.show()
+sns.set(style="whitegrid")
+plt.figure(figsize=(10, 6))
+sns.histplot(data=df, x='gdp_per_capita', kde=True)
+plt.title("Distribution of GDP Per Capita")
+plt.xlabel("GDP Per Capita")
+plt.ylabel("Frequency")
+plt.show()
+plt.figure(figsize=(10, 6))
+sns.catplot(data=df_groupby, x='continent', y='total_cases', kind='bar')
+plt.title("Bar Plot of Total Cases by Continent")
+plt.xlabel("Continent")
+plt.ylabel("Total Cases")
+plt.xticks(rotation=45)
+plt.show()
+plt.figure(figsize=(12, 8))
+sns.pairplot(data=df_groupby)
+plt.title("Pairplot of df_groupby Dataset")
+plt.show()
+df_groupby.to_csv('df_groupby.csv', index=False)
